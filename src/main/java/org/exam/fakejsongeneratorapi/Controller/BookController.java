@@ -24,8 +24,12 @@ public class BookController {
 //    
 
     @GetMapping("/isbn/{isbn}")
-    public Books getBookByIsbn(@PathVariable String isbn) {
-        return bookService.getBookByIsbn(isbn);
+    public ResponseEntity<Books> getBookByIsbn(@PathVariable String isbn) {
+        Books book = bookService.getBookByIsbn(isbn);
+        if (book != null) {
+            return ResponseEntity.ok(book);
+        }
+        return ResponseEntity.notFound().build();
     }
 
 
@@ -44,13 +48,21 @@ public class BookController {
     }
 
     @GetMapping("/publisher/{publisher}")
-    public Books getBookPublisher(@PathVariable String publisher){
-        return bookService.getBookPublisher(publisher);
+    public ResponseEntity<Books> getBookPublisher(@PathVariable String publisher) {
+        Books book = bookService.getBookPublisher(publisher);
+        if (book != null) {
+            return ResponseEntity.ok(book);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/author/{author}")
-    public Books getBookAuthor(@PathVariable String author){
-        return bookService.getBookAuthor(author);
+    public ResponseEntity<Books> getBookAuthor(@PathVariable String author) {
+        Books book = bookService.getBookAuthor(author);
+        if (book != null) {
+            return ResponseEntity.ok(book);
+        }
+        return ResponseEntity.notFound().build();
     }
 
 

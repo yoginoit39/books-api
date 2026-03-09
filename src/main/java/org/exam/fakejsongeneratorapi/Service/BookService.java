@@ -7,7 +7,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +15,16 @@ public class BookService {
     @Autowired
     private RestTemplate restTemplate;
 
+    private List<Books> cachedBooks = null;
+    private long cacheTimestamp = 0;
+    private static final long CACHE_TTL_MS = 60_000;
+
     public List<Books> getBooks() {
+        long now = System.currentTimeMillis();
+        if (cachedBooks != null && (now - cacheTimestamp) < CACHE_TTL_MS) {
+            return cachedBooks;
+        }
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
@@ -52,6 +60,9 @@ public class BookService {
                 }
             }
         }
+
+        cachedBooks = bookList;
+        cacheTimestamp = now;
         return bookList;
     }
 
@@ -59,7 +70,7 @@ public class BookService {
         List<Books> allBooks = getBooks();
 
         for (Books book : allBooks) {
-            if (book.getBookIsbn().equals(isbn)) {
+            if (book.getBookIsbn() != null && book.getBookIsbn().equals(isbn)) {
                 return book;
             }
         }
@@ -83,7 +94,7 @@ public class BookService {
         List<Books> allBooks = getBooks();
 
         for (Books book : allBooks) {
-            if (book.getBookTitle() != null && book.getBookPublisher().equals(publisher)) {
+            if (book.getBookPublisher() != null && book.getBookPublisher().equals(publisher)) {
                 return book;
             }
         }

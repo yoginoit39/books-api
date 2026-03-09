@@ -1,8 +1,6 @@
 package org.exam.fakejsongeneratorapi.Model;
 
 
-import java.util.Date;
-
 public class Books {
 
     private String bookTitle;
